@@ -31,7 +31,6 @@ public class Q3CheckPoint {
 		
 		getFactors(gap);
 		printTree();
-		
 	}
 	
 	private static int gcd(int a, int b) {
