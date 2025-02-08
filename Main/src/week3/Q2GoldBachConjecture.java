@@ -25,8 +25,9 @@ public class Q2GoldBachConjecture {
 			int	start = n / 2;
 			int	end = n / 2;
             while (start >= 2) {
+	            // 증감 여기서 하면 !isPrime[start]일 때 end--가 안됨
                 if (isPrime[start] && isPrime[end]) break;
-                
+
                 start--;
                 end++;
             }
