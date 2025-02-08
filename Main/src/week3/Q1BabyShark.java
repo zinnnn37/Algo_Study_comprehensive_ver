@@ -9,15 +9,13 @@ public class Q1BabyShark {
 	private static int      ans;
 	private static Shark    shark;
 
-	// considering priority
-	private static final int[]  dx = { -1, 0, 0, 1 };
-	private static final int[]  dy = { 0, -1, 1, 0 };
+	private static final int[]  dx = { -1, 0, 1, 0 };
+	private static final int[]  dy = { 0, -1, 0, 1 };
 
 	private static int[][]      matrix;
 	private static boolean[][]  visited;
 
 	private static Queue<Block>         q;  // bfs
-	private static PriorityQueue<Block> pq; // edible fish
 
 	static class Shark {
 		int x;
@@ -75,10 +73,8 @@ public class Q1BabyShark {
 	}
 
 	public static void main(String[] args) throws IOException {
-
 		init();
 		sol();
-
 	}
 
 	private static void init() throws IOException {
@@ -91,7 +87,6 @@ public class Q1BabyShark {
 		visited = new boolean[N][N];
 
 		q = new ArrayDeque<>();
-		pq = new PriorityQueue<>();
 
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -108,15 +103,7 @@ public class Q1BabyShark {
 	}
 
 	private static void sol() {
-		do {
-			for (int i = 0; i < N; i++) {
-				Arrays.fill(visited[i], false);
-			}
-
-			q.clear();
-			pq.clear();
-
-		} while (findFish());
+		do clearAll(); while (findFish());
 
 		System.out.println(ans);
 	}
@@ -147,9 +134,13 @@ public class Q1BabyShark {
 				visited[nx][ny] = true;
 
 				if (matrix[nx][ny] != 0 && matrix[nx][ny] < shark.size) {
+					// first discovered
 					if (fishToEat == null) {
 						fishToEat = new Block(nx, ny, b.time + 1);
 						minDist = b.time + 1;
+					// when distances are equal -> choose by priority
+					// 1. upper pos
+					// 2. leftmost (if rows are same)
 					} else if (b.time + 1 == minDist) {
 						if (nx < fishToEat.x || (nx == fishToEat.x && ny < fishToEat.y)) {
 							fishToEat = new Block(nx, ny, b.time + 1);
@@ -161,17 +152,29 @@ public class Q1BabyShark {
 			}
 		}
 
-		if (fishToEat != null) {
-			matrix[fishToEat.x][fishToEat.y] = 0;
-			shark.updateInfo(fishToEat.x, fishToEat.y);
-			ans += minDist;
+		return fishToEatExists(fishToEat, minDist);
+	}
+
+	private static boolean fishToEatExists(Block b, int dist) {
+		if (b != null) {
+			matrix[b.x][b.y] = 0;
+			shark.updateInfo(b.x, b.y);
+			ans += dist;
 			return true;
 		}
+
 		return false;
 	}
 
 	private static boolean checkOOB(int x, int y) {
 		return 0 <= x && x < N && 0 <= y && y < N;
+	}
+
+	private static void clearAll() {
+		for (int i = 0; i < N; i++) {
+			Arrays.fill(visited[i], false);
+		}
+		q.clear();
 	}
 
 }
