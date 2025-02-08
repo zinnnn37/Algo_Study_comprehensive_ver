@@ -49,7 +49,7 @@ public class Q1BabyShark {
 
 	}
 
-	static class Block implements Comparable<Block> {
+	static class Block {
 		int x;
 		int y;
 		int time;
@@ -58,17 +58,6 @@ public class Q1BabyShark {
 			this.x = x;
 			this.y = y;
 			this.time = time;
-		}
-
-		@Override
-		public int compareTo(Block o) {
-			if (this.time != o.time)
-				return Integer.compare(this.time, o.time);
-
-			if (this.x != o.x)
-				return Integer.compare(this.x, o.x);
-
-			return Integer.compare(this.y, o.y);
 		}
 	}
 
