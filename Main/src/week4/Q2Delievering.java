@@ -91,8 +91,6 @@ public class Q2Delievering {
 				}
 			}
 		}
-		
 		System.out.println(dist[N]);
 	}
-	
 }
