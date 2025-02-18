@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-public class Q1AdolesentShart {
+public class Q1AdolesentShark {
 
 	// ↑, ↖, ←, ↙, ↓, ↘, →, ↗
 	private static final int[]  dx = {-1, -1, 0, 1, 1, 1, 0, -1};
