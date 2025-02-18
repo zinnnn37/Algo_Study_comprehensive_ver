@@ -8,33 +8,30 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 public class Q1AdolesentShart {
-	
-	// ↑, ↖, ←, ↙, ↓, ↘, →, ↗
-	private static final int[]	dx = { -1, -1, 0, 1, 1, 1, 0, -1 };
-	private static final int[]	dy = { 0, -1, -1, -1, 0, 1, 1, 1 };
-	
-	private static int	maxSum;
-	
-	private static Shark	shark;
 
-	private static int[][]					fishArr;
-	private static HashMap<Integer, Fish>	fishMap;
-	private static int[][]                  fishArrCopy;
-	private static HashMap<Integer, Fish>   fishMapCopy;
+	// ↑, ↖, ←, ↙, ↓, ↘, →, ↗
+	private static final int[]  dx = {-1, -1, 0, 1, 1, 1, 0, -1};
+	private static final int[]  dy = {0, -1, -1, -1, 0, 1, 1, 1};
+
+	private static int          maxSum;
+	private static Shark        shark;
+
+	private static int[][]                  fishArr;
+	private static HashMap<Integer, Fish>   fishMap;
 
 	static class Fish {
-		int		x;
-		int		y;
-		int		dir;
-		boolean	isAlive;
-		
+		int x;
+		int y;
+		int dir;
+		boolean isAlive;
+
 		Fish(int x, int y, int dir) {
 			this.x = x;
 			this.y = y;
-			this.dir = dir;
+			this.dir = dir - 1;
 			this.isAlive = true;
 		}
-		
+
 		void setIsAlive(boolean isAlive) {
 			this.isAlive = isAlive;
 		}
@@ -47,38 +44,38 @@ public class Q1AdolesentShart {
 		void updateDir(int dir) {
 			this.dir = dir;
 		}
-
 	}
+
 	static class Shark {
-		int	x;
-		int	y;
-		int	dir;
+		int x;
+		int y;
+		int dir;
 
 		Shark() {
 			this.x = 0;
 			this.y = 0;
 			this.dir = 0;
 		}
-
 	}
+
 	public static void main(String[] args) throws IOException {
 		init();
 		sol();
 	}
 
 	private static void init() throws IOException {
-		BufferedReader	br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer	st;
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
 
 		shark = new Shark();
-
 		fishArr = new int[4][4];
 		fishMap = new HashMap<>();
+
 		for (int i = 0; i < 4; i++) {
 			st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < 4; j++) {
-				int	key = Integer.parseInt(st.nextToken());
-				int	dir = Integer.parseInt(st.nextToken());
+				int key = Integer.parseInt(st.nextToken());
+				int dir = Integer.parseInt(st.nextToken());
 
 				fishArr[i][j] = key;
 				fishMap.put(key, new Fish(i, j, dir));
@@ -88,124 +85,118 @@ public class Q1AdolesentShart {
 
 	private static void sol() {
 		// start to eat
-		int		key = fishArr[0][0];
-		Fish	eaten = fishMap.get(key);
+		int key = fishArr[0][0];
+		Fish eaten = fishMap.get(key);
 
 		// initial eating
 		fishArr[0][0] = -1;
 		shark.dir = eaten.dir;
-		eaten.setIsAlive(false);
+		fishMap.remove(key);
 
-		moveShark(0);
-
+		moveShark(key);
 		System.out.println(maxSum);
 	}
 
 	private static void moveShark(int total) {
-		// update maximum value
 		maxSum = Math.max(maxSum, total);
 
-		fishArrCopy = new int[4][4];
-		fishMapCopy = new HashMap<Integer, Fish>();
-
-		deepCopy();
 		moveFish();
 
-		// can move 1~3
-		for (int i = 1; i < 4; i++) {
+		// move 1~3
+		for (int i = 1; i <= 3; i++) {
 			int nx = shark.x + dx[shark.dir] * i;
 			int ny = shark.y + dy[shark.dir] * i;
 
-			if (!isValidPoint(nx, ny) || fishArrCopy[nx][ny] <= 0) continue;
+			if (!isValidPoint(nx, ny) || fishArr[nx][ny] <= 0) continue;
 
-			// prev data of shark
+			// current state
+			int[][] tempArr = copyArray(fishArr);
+			HashMap<Integer, Fish> tempMap = copyMap(fishMap);
 			int prevX = shark.x;
 			int prevY = shark.y;
 			int prevDir = shark.dir;
 
 			// eat
-			int     target = fishArrCopy[nx][ny];
-			Fish	targetFish = fishMap.get(target);
+			int fishNum = fishArr[nx][ny];
+			Fish targetFish = fishMap.get(fishNum);
+			fishArr[prevX][prevY] = 0;
+			fishArr[nx][ny] = -1;
+			fishMap.remove(fishNum);
 
-			fishArrCopy[nx][ny] = -1;
-			targetFish.setIsAlive(false);
 			shark.x = nx;
 			shark.y = ny;
 			shark.dir = targetFish.dir;
 
-			moveShark(total + target);
+			moveShark(total + fishNum);
 
-			shark.dir = prevDir;
-			shark.y = prevY;
+			// restore
+			fishArr = copyArray(tempArr);
+			fishMap = copyMap(tempMap);
 			shark.x = prevX;
-			targetFish.setIsAlive(true);
-			fishArrCopy[nx][ny] = target;
+			shark.y = prevY;
+			shark.dir = prevDir;
 		}
-
-		fishArr = fishArrCopy;
-		fishMap = fishMapCopy;
 	}
 
 	private static void moveFish() {
 		for (int i = 1; i <= 16; i++) {
-			Fish	curFish = fishMap.get(i);
+			if (!fishMap.containsKey(i)) continue;
 
-			// if dead
-			if (!(curFish.isAlive)) continue;
+			Fish fish = fishMap.get(i);
+			int originalDir = fish.dir;
 
-			int x = curFish.x;
-			int y = curFish.y;
-			int dir = curFish.dir;
-
-			// rotate fish
 			for (int d = 0; d < 8; d++) {
-				int nx = x + dx[d];
-				int ny = y + dy[d];
-				int nxtDir = (dir + d) % 8;
+				int nextDir = (originalDir + d) % 8;
+				int nx = fish.x + dx[nextDir];
+				int ny = fish.y + dy[nextDir];
 
-				// out of bound
-				if (!isValidPoint(nx, ny) || fishArrCopy[nx][ny] == -1) continue;
+				if (!isValidPoint(nx, ny) || fishArr[nx][ny] == -1) continue;
 
-				// blank
-				if (fishArrCopy[nx][ny] == 0) {
-					curFish.updatePoint(nx, ny);
-					fishArrCopy[nx][ny] = i;
-					fishArrCopy[x][y] = 0;
-					break;
+				fish.dir = nextDir;
+
+				if (fishArr[nx][ny] == 0) {
+					// empty block
+					fishArr[fish.x][fish.y] = 0;
+					fishArr[nx][ny] = i;
+					fish.updatePoint(nx, ny);
+				} else {
+					// swap
+					int targetFishNum = fishArr[nx][ny];
+					Fish targetFish = fishMap.get(targetFishNum);
+
+					int tx = fish.x, ty = fish.y;
+					fishArr[tx][ty] = targetFishNum;
+					fishArr[nx][ny] = i;
+
+					fish.updatePoint(nx, ny);
+					targetFish.updatePoint(tx, ty);
 				}
-
-				// other fish
-				int     target = fishArrCopy[nx][ny];
-				Fish    targetFish = fishMapCopy.get(target);
-
-				// switch value
-				fishArrCopy[nx][ny] = i;
-				fishArrCopy[x][y] = target;
-				curFish.updatePoint(nx, ny);
-				targetFish.updatePoint(x, y);
-				curFish.updateDir(nxtDir);
-
 				break;
 			}
 		}
 	}
 
-	private static void deepCopy() {
+	private static int[][] copyArray(int[][] arr) {
+		int[][] copy = new int[4][4];
 		for (int i = 0; i < 4; i++) {
-			fishArrCopy[i] = Arrays.copyOf(fishArr[i], 4);
+			copy[i] = Arrays.copyOf(arr[i], 4);
 		}
+		return copy;
+	}
 
-		for (int key : fishMap.keySet()) {
-			Fish    curFish = fishMap.get(key);
-			Fish	newFish = new Fish(curFish.x, curFish.y, curFish.dir);
+	private static HashMap<Integer, Fish> copyMap(HashMap<Integer, Fish> map) {
+		HashMap<Integer, Fish> copy = new HashMap<>();
+		for (int key : map.keySet()) {
+			Fish    original = map.get(key);
+			Fish    newFish = new Fish(original.x, original.y, original.dir + 1);
 
-			fishMapCopy.put(key, newFish);
-			newFish.updateDir(curFish.dir);
+			newFish.dir = original.dir;
+			copy.put(key, newFish);
 		}
+		return copy;
 	}
 
 	private static boolean isValidPoint(int x, int y) {
 		return 0 <= x && x < 4 && 0 <= y && y < 4;
 	}
-
 }
