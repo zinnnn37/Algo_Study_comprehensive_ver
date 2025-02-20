@@ -10,8 +10,8 @@ import java.util.StringTokenizer;
 public class Q1AdolesentShark {
 
 	// ↑, ↖, ←, ↙, ↓, ↘, →, ↗
-	private static final int[]  dx = {-1, -1, 0, 1, 1, 1, 0, -1};
-	private static final int[]  dy = {0, -1, -1, -1, 0, 1, 1, 1};
+	private static final int[]  dx = { -1, -1, 0, 1, 1, 1, 0, -1 };
+	private static final int[]  dy = { 0, -1, -1, -1, 0, 1, 1, 1 };
 
 	private static int          maxSum;
 	private static Shark        shark;
@@ -73,6 +73,7 @@ public class Q1AdolesentShark {
 
 		for (int i = 0; i < 4; i++) {
 			st = new StringTokenizer(br.readLine());
+			
 			for (int j = 0; j < 4; j++) {
 				int key = Integer.parseInt(st.nextToken());
 				int dir = Integer.parseInt(st.nextToken());
@@ -94,6 +95,7 @@ public class Q1AdolesentShark {
 		fishMap.remove(key);
 
 		moveShark(key);
+		
 		System.out.println(maxSum);
 	}
 
@@ -110,15 +112,17 @@ public class Q1AdolesentShark {
 			if (!isValidPoint(nx, ny) || fishArr[nx][ny] <= 0) continue;
 
 			// current state
-			int[][] tempArr = copyArray(fishArr);
-			HashMap<Integer, Fish> tempMap = copyMap(fishMap);
+			int[][] 				tempArr = copyArray(fishArr);
+			HashMap<Integer, Fish>	tempMap = copyMap(fishMap);
+			
 			int prevX = shark.x;
 			int prevY = shark.y;
 			int prevDir = shark.dir;
 
 			// eat
-			int fishNum = fishArr[nx][ny];
+			int	 fishNum = fishArr[nx][ny];
 			Fish targetFish = fishMap.get(fishNum);
+			
 			fishArr[prevX][prevY] = 0;
 			fishArr[nx][ny] = -1;
 			fishMap.remove(fishNum);
@@ -143,7 +147,7 @@ public class Q1AdolesentShark {
 			if (!fishMap.containsKey(i)) continue;
 
 			Fish fish = fishMap.get(i);
-			int originalDir = fish.dir;
+			int  originalDir = fish.dir;
 
 			for (int d = 0; d < 8; d++) {
 				int nextDir = (originalDir + d) % 8;
@@ -161,7 +165,7 @@ public class Q1AdolesentShark {
 					fish.updatePoint(nx, ny);
 				} else {
 					// swap
-					int targetFishNum = fishArr[nx][ny];
+					int  targetFishNum = fishArr[nx][ny];
 					Fish targetFish = fishMap.get(targetFishNum);
 
 					int tx = fish.x, ty = fish.y;
@@ -178,6 +182,7 @@ public class Q1AdolesentShark {
 
 	private static int[][] copyArray(int[][] arr) {
 		int[][] copy = new int[4][4];
+		
 		for (int i = 0; i < 4; i++) {
 			copy[i] = Arrays.copyOf(arr[i], 4);
 		}
@@ -186,9 +191,10 @@ public class Q1AdolesentShark {
 
 	private static HashMap<Integer, Fish> copyMap(HashMap<Integer, Fish> map) {
 		HashMap<Integer, Fish> copy = new HashMap<>();
+		
 		for (int key : map.keySet()) {
-			Fish    original = map.get(key);
-			Fish    newFish = new Fish(original.x, original.y, original.dir + 1);
+			Fish original = map.get(key);
+			Fish newFish = new Fish(original.x, original.y, original.dir + 1);
 
 			newFish.dir = original.dir;
 			copy.put(key, newFish);
