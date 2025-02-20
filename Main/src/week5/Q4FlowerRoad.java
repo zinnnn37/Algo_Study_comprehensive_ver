@@ -65,6 +65,7 @@ public class Q4FlowerRoad {
 			for (int j = (i == x ? y : 1); j < N-1; j++) {
 				if (!isAvailable(i, j)) continue;
 				
+				// cost when planting flower at (i, j)
 				int costHere = getCost(i, j);
 				
 				tmpSum += costHere;
