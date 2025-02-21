@@ -10,12 +10,13 @@ public class Q4FlowerRoad {
 	private static final int[]	dx = { 0, 1, 0, -1 };
 	private static final int[]	dy = { 1, 0, -1, 0 };
 	
-	private static int	N;
-	private static int	tmpSum;
-	private static int	minSum;
+	private static int N;
+	private static int tmpSum;
+	private static int minSum;
 	
-	private static int[][]		cost;
-	private static boolean[][]	visited;
+	private static int[][]	   cost;
+	private static int[][]     points;
+	private static boolean[][] visited;
 	
 	public static void main(String[] args) throws IOException {
 		sol();
@@ -39,6 +40,8 @@ public class Q4FlowerRoad {
 		
 		N      = Integer.parseInt(br.readLine());
 		minSum = Integer.MAX_VALUE;
+		
+		points = new int[5][2];
 		
 		cost    = new int[N][N];
 		visited = new boolean[N][N];
@@ -87,37 +90,45 @@ public class Q4FlowerRoad {
 	
 	private static boolean isAvailable(int x, int y) {
 		if (isOOB(x, y)) return false;
-		if (visited[x][y]) return false;
 		
-		for (int d = 0; d < 4; d++) {
-			int	nx = x + dx[d];
-			int ny = y + dy[d];
-			
-			if (visited[nx][ny]) return false;
+		getCrossPoints(x, y);
+		
+		for (int[] p : points) {
+			if (visited[p[0]][p[1]]) return false;
 		}
 		return true;
 	}
 	
 	private static void setVisited(int x, int y, boolean flag) {
-		visited[x][y] = flag;
-		for (int d = 0; d < 4; d++) {
-			int	nx = x + dx[d];
-			int ny = y + dy[d];
-			
-			visited[nx][ny] = flag;
+		getCrossPoints(x, y);
+		
+		for (int[] p : points) {
+			visited[p[0]][p[1]] = flag;
 		}
 	}
 	
 	private static int getCost(int x, int y) {
-		int	ret = cost[x][y];
+		getCrossPoints(x, y);
+
+		int	ret = 0;
 		
+		for (int[] p : points) {
+			ret += cost[p[0]][p[1]];
+		}
+
+		return ret;
+	}
+	
+	private static void getCrossPoints(int x, int y) {
 		for (int d = 0; d < 4; d++) {
 			int	nx = x + dx[d];
 			int ny = y + dy[d];
 			
-			ret += cost[nx][ny];
+			points[d][0] = nx;
+			points[d][1] = ny;
 		}
-		return ret;
+		points[4][0] = x;
+		points[4][1] = y;
 	}
 	
 	private static boolean isOOB(int x, int y) {
