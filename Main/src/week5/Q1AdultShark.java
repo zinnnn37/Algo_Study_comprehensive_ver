@@ -6,10 +6,10 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 enum State {
-	UP(1),
-	DOWN(2),
-	LEFT(3),
-	RIGHT(4);
+	UP(0),
+	DOWN(1),
+	LEFT(2),
+	RIGHT(3);
 
 	private final int value;
 
@@ -24,16 +24,56 @@ enum State {
 
 public class Q1AdultShark {
 
-	private static final int[] dx = {-1, 1, 0, 0};
-	private static final int[] dy = {0, 0, -1, 1};
+	private static final int[] dx = { -1, 1, 0, 0 };
+	private static final int[] dy = { 0, 0, -1, 1 };
 
 	private static int N;  // size
 	private static int M;  // nums of shark
 	private static int K;  // duration
 
-	private static Shark[]   sharks; // manage shark
+	private static Shark[]   sharks; // manage shark -> map으로 바꿀까,, key = id
 	private static Block[][] matrix;
 	private static int[][][] priorities;
+	
+	private static class Shark {
+		int   id;
+		int   x;
+		int   y;
+		State dir;
+	}
+	
+	private static class Block {
+		int   sentOf;	// shark id
+		int   duration;
+		Shark shark;
+		
+		Block(int sentOf, int duration, Shark shark) {
+			this.sentOf = sentOf;
+			this.duration = duration;
+			this.shark = shark;
+		}
+		
+		public void decreaseDuration() {
+			duration--;
+		}
+		
+		public void setDuration(int duration) {
+			this.duration = duration;
+		}
+		
+		public void setShark(Shark shark) {
+			this.shark = shark;
+		}
+		
+		public boolean isSmellRemain() {
+			return duration > 0;
+		}
+		
+		public void setNewSmell(int sharkId) {
+			this.sentOf = sharkId;
+			this.duration = K;
+		}
+	}
 
 	public static void main(String[] args) throws IOException {
 		sol();
@@ -83,46 +123,6 @@ public class Q1AdultShark {
 
 	private static void decreaseDurationOfSmell() {
 		// TODO 상어 없는데 냄새는 있는 곳 decreaseDuration()
-	}
-
-	private static class Shark {
-		int   id;
-		int   x;
-		int   y;
-		State dir;
-	}
-
-	private static class Block {
-		int   sentOf;
-		int   duration;
-		Shark shark;
-
-		Block(int sentOf, int duration, Shark shark) {
-			this.sentOf = sentOf;
-			this.duration = duration;
-			this.shark = shark;
-		}
-
-		public void decreaseDuration() {
-			duration--;
-		}
-
-		public void setDuration(int duration) {
-			this.duration = duration;
-		}
-
-		public void setShark(Shark shark) {
-			this.shark = shark;
-		}
-
-		public boolean isSmellRemain() {
-			return duration > 0;
-		}
-
-		public void setNewSmell(int sharkId) {
-			this.sentOf = sharkId;
-			this.duration = K;
-		}
 	}
 
 }
