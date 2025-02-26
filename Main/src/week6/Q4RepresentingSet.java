@@ -51,9 +51,9 @@ public class Q4RepresentingSet {
 		}
 	}
 	
-	private static void union(int a, int b) {
-		a = find(a);
-		b = find(b);
+	private static void union(int x, int y) {
+		int a = find(x);
+		int b = find(y);
 		
 		if (a == b) return ;
 		
