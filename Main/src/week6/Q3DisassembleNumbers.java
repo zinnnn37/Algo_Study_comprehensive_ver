@@ -26,7 +26,7 @@ public class Q3DisassembleNumbers {
 	private static void sol() {
 		int ans = 0;
 		
-		if (N < 4) {
+		if (N < 2) {
 			ans = N;
 		} else if (N % 3 == 0) {
 			ans = mod(pow(3, N / 3));
