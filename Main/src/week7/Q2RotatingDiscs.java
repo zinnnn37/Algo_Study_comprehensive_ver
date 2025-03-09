@@ -62,12 +62,12 @@ public class Q2RotatingDiscs {
 			k = Integer.parseInt(st.nextToken());
 
 			toRemove.clear();
-			process(t);
+			process();
 		}
 		System.out.println(getAns());
 	}
 
-	private static void process(int t) {
+	private static void process() {
 		rotate();
 		removeDuplicatedNumbers();
 
